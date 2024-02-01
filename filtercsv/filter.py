@@ -1,6 +1,6 @@
 import csv
 import random
-
+ #dddd
 # Read the original CSV file
 input_file = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/data/twitter_training.csv'
 output_file = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/data/filter_twitter_training.csv'
