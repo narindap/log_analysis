@@ -1,39 +1,9 @@
 import fasttext
-import spacy
-from nltk import PorterStemmer
-import re
 import tempfile
+from wordcut_utils import wordcut, wordcut_model
 
-nlp = spacy.load("en_core_web_md")
-stemmer = PorterStemmer()
 log_data = './data/labeled_log_data.csv'
 log_input = './data/input.txt'
-
-
-def wordcut(input_text):
-    sentences = []
-
-    for line in input_text:
-        line = re.sub(r'[^a-zA-Z0-9 ]', '', line).strip()
-        doc = nlp(line)
-        english_words = [stemmer.stem(token.lemma_.lower()) for token in doc]
-        sentence = ' '.join(english_words)
-        sentences.append(sentence)
-
-    return ' '.join(sentences)
-
-
-def wordcut_model(input_text):
-    sentences = []
-
-    for line in input_text:
-        line = re.sub(r'[^a-zA-Z0-9 ]', '', line).strip()
-        doc = nlp(line)
-        english_words = [stemmer.stem(token.lemma_.lower()) for token in doc]
-        sentence = ''.join(english_words)
-        sentences.append(sentence)
-
-    return ' '.join(sentences)
 
 
 def train_fasttext_model(log_data):
