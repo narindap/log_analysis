@@ -5,7 +5,6 @@ from wordcut_utils import wordcut, wordcut_model
 category = './data/category.csv'
 #log_input = './data/input.txt'
 
-
 def train_fasttext_model(log_data):
     with open(log_data, 'r', encoding='utf-8') as log_file:
         processed_text = wordcut_model(log_file)
