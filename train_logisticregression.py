@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from joblib import dump
 
-def train_and_save_model(file_path='./data/twitter_training.csv', model_filename='logistic_regression_model.joblib'):
+def train_and_save_model(file_path='./data/filter_twitter_training.csv', model_filename='logistic_regression_model.joblib'):
     # Load data
     df = pd.read_csv(file_path)
 
