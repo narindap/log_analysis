@@ -1,6 +1,7 @@
 import fasttext
 import tempfile
 from wordcut_utils import wordcut, wordcut_model
+from predict_model import  predict_sentiment
 
 category = './data/category.csv'
 #log_input = './data/input.txt'
@@ -30,9 +31,15 @@ def similar_word(input_text, log_data):
     for chunk in chunks:
         chunk_sentence = ' '.join(chunk)
         similar_words = model.get_nearest_neighbors(chunk_sentence, k=1)
+        tmpscore = -1
+        tmpword = None
         for word, similarity in similar_words:
-            #if float(word) > 0.5:
-                print(f"[ {chunk_sentence} ] \n########## {similarity} : {word} ##########")
+            if word > tmpscore and float(word) > 0.5:
+                tmpscore = word
+                tmpword = similarity
+        if tmpword is not None:
+            print(f"[ {chunk_sentence} ] \n########## {similarity} : {word} ##########")
+            predict_sentiment([input_text],[tmpword])
 
 
 if __name__ == "__main__":
