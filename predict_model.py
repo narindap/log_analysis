@@ -1,9 +1,7 @@
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.linear_model import LogisticRegression
 from joblib import load
 
-def predict_sentiment(test_log_error_texts, test_log_names, model_filename='logistic_regression_model.joblib'):
+def predict_sentiment(test_log_error_texts, test_log_names, model_filename='random_forest_model.joblib'):
     # Load the trained model and vectorizers
     loaded_model, text_vectorizer, name_vectorizer = load(model_filename)
 
@@ -24,9 +22,3 @@ def predict_sentiment(test_log_error_texts, test_log_names, model_filename='logi
     print("Predicted Probabilities for Additional Data:")
     for i, class_name in enumerate(loaded_model.classes_):
         print(f"Probability of {class_name}: {predicted_proba[0][i]}")
-
-if __name__ == "__main__":
-    test_log_error_texts = ['im getting into borderlands and i can murder you all']
-    test_log_names = ['Borderlands']
-
-    predict_sentiment(test_log_error_texts, test_log_names)
