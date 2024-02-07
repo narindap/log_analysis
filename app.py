@@ -40,17 +40,16 @@ def predict_fasttext(input_text):
     tmpword = similar_word(input_text, model_path)
     return tmpword
 
-def predict_RF(input_text,tmpword):
-
+def predict_RF(input_text, tmpword):
     model_path = './model/random_forest_model.joblib'
-    predict_sentiment(input_text,tmpword,model_path)
+    predict_sentiment([input_text], [tmpword], model_path)
 
 
 
 if __name__ == "__main__":
     # Comment out the training if it's already done
-    train_fasttext()
-    train_RF()
+    # train_fasttext()
+    # train_RF()
 
 
     print("input text")
@@ -58,6 +57,7 @@ if __name__ == "__main__":
 
     # Predict using fasttext
     tmpword = predict_fasttext(input_text)
-    predict_sentiment(input_text,tmpword)
+    print(tmpword)
+    predict_RF(input_text,tmpword)
 
     

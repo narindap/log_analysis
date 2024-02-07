@@ -61,7 +61,7 @@ def similar_word(input_text, model_path):
         print(f"[ {max_chunk} ] \n########## {max_similarity} : {max_word} ##########")
         # Predict sentiment using the input text and the most similar word
         # predict_sentiment([input_text], [max_word])
-    return similar_word
+    return max_word
 
 # Main section
 if __name__ == "__main__":
