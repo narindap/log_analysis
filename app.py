@@ -1,12 +1,15 @@
 import pandas as pd
 from unsupervised import similar_word, train_fasttext_model
-from train_logisticregression import train_and_save_model
+
 from predict_model import predict_sentiment
+from train_randomforest import train_and_save_model
+from scipy.stats import randint
 
 def train_fasttext():
-    # Train fasttext
-    category_unsup = './data/category.csv'
-    model_locate = './fasttext_model.bin'
+    # Train FastText
+    file_path = pd.read_csv('./data/category.csv')
+    data_category = file_path['keyword']
+    model_path = './model/fasttext_model.bin'
     model_settings = {
         'model': 'skipgram',
         'minCount': 1,
@@ -14,55 +17,47 @@ def train_fasttext():
         'word_ngrams': 1,
         'dim': 300
     }
-    train_fasttext_model(category_unsup, model_settings, model_locate)
+    train_fasttext_model(data_category, model_settings, model_path)
 
-def train_LR():
-    # Train LR
-    LR_model = './LR_model.joblib'
-    file_LR = './data/filter_twitter_training.csv'
-    rf_params = {'n_estimators': 150, 'random_state': 42}
-    train_and_save_model(file_LR, LR_model)
 
-def predict_fasttext(input_text, model_locate):
+def train_RF():
+    
+    model_path ='./model/random_forest_model.joblib'
+    file_path = './data/twitter_training.csv'
+    model_setting = {
+    'n_estimators': randint(50, 200),
+    'max_depth': [None, 10, 20],
+    'min_samples_split': randint(2, 10),
+    'min_samples_leaf': randint(1, 4)
+    }
+
+    train_and_save_model(file_path, model_path,model_setting)
+
+def predict_fasttext(input_text):
     # Predict using fasttext
-    return similar_word(input_text, model_locate)
+    # input_text = "@ amazon I think this is in bad taste and a terrible exploitation of a man's death. they claim BLM, but here we are. pic.twitter.com "
+    model_path = "./model/fasttext_model.bin"
+    tmpword = similar_word(input_text, model_path)
+    return tmpword
 
-def predict_LR(test_text, tmpword, model_filename):
-    # Predict using LR
-    test_names = 'SomeName'
-    predict_sentiment([test_text], [test_names], model_filename)
+def predict_RF(input_text,tmpword):
+
+    model_path = './model/random_forest_model.joblib'
+    predict_sentiment(input_text,tmpword,model_path)
+
+
 
 if __name__ == "__main__":
     # Comment out the training if it's already done
-    # train_fasttext()
-    train_LR()
-
-    # Read the CSV file
-    # csv_file_path = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/data/test.csv'
-    # df = pd.read_csv(csv_file_path)
-
-    # # Iterate through each row and perform predictions
-    # for index, row in df.iterrows():
-    #     input_text = row['log_error_text']
-    #     model_locate = "fasttext_model.bin"
-        
-    #     # Perform prediction using fasttext
-    #     tmpword = predict_fasttext(input_text, model_locate)
-        
-    #     # Print the result
-    #     print(f"Prediction for log_id {row['log_id']}: {tmpword}")
-
-    #     # Optionally, you can also perform LR prediction here if needed
-    #     model_filename = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/LR_model.joblib'
-    #     predict_LR(input_text, tmpword, model_filename)
+    train_fasttext()
+    train_RF()
 
 
-    # # Predict using fasttext
-    # input_text = "@ amazon I think this is in bad taste and a terrible exploitation of a man's death. they claim BLM, but here we are. pic.twitter.com "
-    # model_locate = "fasttext_model.bin"
-    # tmpword = predict_fasttext(input_text, model_locate)
-    # print(tmpword)
+    print("input text")
+    input_text = input()
 
-    # # Predict using LR
-    # model_filename = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/LR_model.joblib'
-    # predict_LR(input_text, tmpword, model_filename)
+    # Predict using fasttext
+    tmpword = predict_fasttext(input_text)
+    predict_sentiment(input_text,tmpword)
+
+    

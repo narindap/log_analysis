@@ -1,31 +1,32 @@
 import fasttext
 import tempfile
 import pandas as pd
-from wordcut_utils import wordcut_input, wordcut_unsupervised
+from wordcut_utils import preprocess_input, preprocess_unsupervised
 from predict_model import predict_sentiment
 
 
 df = pd.read_csv('./data/category.csv')
-data_category = df['log_error']
+data_category = df['keyword']
 
 # Function to train FastText model
-def train_fasttext_model(data_category):
+def train_fasttext_model(data_category,model_settings,model_path):
     # Preprocess text
-    processed_text = wordcut_unsupervised(data_category)
+    processed_text = preprocess_unsupervised(data_category)
     
-    # Write processed text to a temporary file
+    # Write processed text 
     with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
         temp_file.write(processed_text)
 
-    # Train FastText model using the temporary file
+    # Train FastText model 
     model = fasttext.train_unsupervised(temp_file.name, **model_settings)
+    model.save_model(model_path)
 
     return model
 
 # Function to find a similar word
-def similar_word(input_text, data_category):
+def similar_word(input_text, model_path):
     # Preprocess input text using wordcut
-    processed_text = wordcut_input([input_text])
+    processed_text = preprocess_input([input_text])
 
     # Determine the number of words per line for FastText
     words_per_line = 2
@@ -33,7 +34,7 @@ def similar_word(input_text, data_category):
         words_per_line = 3
 
     # Train FastText
-    model_fasttext = train_fasttext_model(data_category)
+    model_fasttext = fasttext.load_model(model_path)
 
     # Split input into chunks
     words = processed_text.split()
@@ -59,7 +60,8 @@ def similar_word(input_text, data_category):
     if max_chunk is not None:
         print(f"[ {max_chunk} ] \n########## {max_similarity} : {max_word} ##########")
         # Predict sentiment using the input text and the most similar word
-        predict_sentiment([input_text], [max_word])
+        # predict_sentiment([input_text], [max_word])
+    return similar_word
 
 # Main section
 if __name__ == "__main__":

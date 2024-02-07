@@ -7,8 +7,7 @@ from joblib import dump
 from wordcut_utils import preprocess_dataset
 from scipy.stats import randint
 
-def train_and_save_model(file_path='./data/twitter_training.csv', 
-                         model_filename='./model/random_forest_model.joblib'):
+def train_and_save_model(file_path, model_path, model_setting):
 
     df = pd.read_csv(file_path)
     df = df.dropna(subset=['topic', 'sentiment', 'text'])
@@ -27,28 +26,14 @@ def train_and_save_model(file_path='./data/twitter_training.csv',
 
     rf_model = RandomForestClassifier()
 
-    param_dist = {
-        'n_estimators': randint(50, 200),
-        'max_depth': [None, 10, 20],
-        'min_samples_split': randint(2, 10),
-        'min_samples_leaf': randint(1, 4)
-    }
-
-    #RandomizedSearchCV
-    random_search = RandomizedSearchCV(rf_model, 
-                                       param_distributions=param_dist, 
-                                       n_iter=10, 
-                                       cv=5, 
-                                       n_jobs=-1, 
-                                       verbose=1, 
-                                       scoring='accuracy', 
-                                       random_state=42)
+    # RandomizedSearchCV
+    random_search = RandomizedSearchCV(rf_model, param_distributions=model_setting)
 
     random_search.fit(X_train, y_train)
     best_model = random_search.best_estimator_
 
-    dump((best_model, text_vectorizer, topic_vectorizer), model_filename)
-    print(f"Best model saved as {model_filename}")
+    dump((best_model, text_vectorizer, topic_vectorizer), model_path)
+    print(f"Best model saved as {model_path}")
 
     predictions = best_model.predict(X_test)
     accuracy = accuracy_score(y_test, predictions)
@@ -60,5 +45,4 @@ def train_and_save_model(file_path='./data/twitter_training.csv',
     print("Classification Report:\n", classification_rep)
     print("Confusion Matrix:\n", conf_matrix)
 
-if __name__ == "__main__":
-    train_and_save_model()
+# Rest of the code remains the same
