@@ -1,3 +1,6 @@
 fasttext
 spacy
+en_core_web_sm
 nltk
+scikit-learn
+pandas
