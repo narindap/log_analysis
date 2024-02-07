@@ -65,4 +65,4 @@ if __name__ == "__main__":
 
     # # Predict using LR
     # model_filename = '/Users/nakarin.rue/Documents/log_analyze/log_analysis/LR_model.joblib'
-    # predict_LR(input_text, tmpword, model_filename
+    # predict_LR(input_text, tmpword, model_filename)
