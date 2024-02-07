@@ -1,15 +1,15 @@
 import pandas as pd
 from joblib import load
 
-def predict_sentiment(test_log_error_texts, test_log_names, model_filename='random_forest_model.joblib'):
+def predict_sentiment(test_texts, test_topics, model='./model/random_forest_model.joblib'):
     # Load the trained model and vectorizers
-    loaded_model, text_vectorizer, name_vectorizer = load(model_filename)
+    loaded_model, text_vectorizer, name_vectorizer = load(model)
 
     # Feature extraction for additional data
-    X_test_text = text_vectorizer.transform(test_log_error_texts)
-    X_test_name = name_vectorizer.transform(test_log_names)
+    X_test_text = text_vectorizer.transform(test_texts)
+    X_test_topic = name_vectorizer.transform(test_topics)
 
-    X_test_combined = pd.concat([pd.DataFrame(X_test_text.toarray()), pd.DataFrame(X_test_name.toarray())], axis=1)
+    X_test_combined = pd.concat([pd.DataFrame(X_test_text.toarray()), pd.DataFrame(X_test_topic.toarray())], axis=1)
 
     # Make predictions
     predictions_additional = loaded_model.predict(X_test_combined)
