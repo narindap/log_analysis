@@ -1,4 +1,4 @@
-log_id,log_name,sentiment,log_error_text
+id,topic,sentiment,text
 2401,Borderlands,Positive,"im getting on borderlands and i will murder you all ,"
 2401,Borderlands,Positive,"I am coming to the borders and I will kill you all,"
 2401,Borderlands,Positive,"im getting on borderlands and i will kill you all,"

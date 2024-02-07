@@ -29,7 +29,8 @@ def preprocess_unsupervised(input_text):
         preprocessed_sentences.append(sentence)
     return ' '.join(preprocessed_sentences)
 
-def preprocess_text(text):
+def preprocess_dataset(text):
+
     doc = nlp(text)
     stemmed_and_lemmatized = [stemmer.stem(token.lemma_.lower()) for token in doc]
     return ' '.join(stemmed_and_lemmatized)
