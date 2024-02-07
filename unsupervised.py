@@ -1,41 +1,52 @@
 import fasttext
 import tempfile
-
 import pandas as pd
 from wordcut_utils import wordcut_input, wordcut_unsupervised
 from predict_model import predict_sentiment
 
-df = pd.read_csv('./data/category.csv')
-log_data = df['log_error']  # Assuming 'log_error' is the column you want to use
 
-def train_fasttext_model(log_data):
-    processed_text = wordcut_unsupervised(log_data)
-    print(processed_text)
+df = pd.read_csv('./data/category.csv')
+data_category = df['log_error']
+
+# Function to train FastText model
+def train_fasttext_model(data_category):
+    # Preprocess text
+    processed_text = wordcut_unsupervised(data_category)
+    
+    # Write processed text to a temporary file
     with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
         temp_file.write(processed_text)
 
+    # Train FastText model using the temporary file
     model = fasttext.train_unsupervised(temp_file.name, **model_settings)
 
     return model
 
-def similar_word(input_text, log_data):
+# Function to find a similar word
+def similar_word(input_text, data_category):
+    # Preprocess input text using wordcut
     processed_text = wordcut_input([input_text])
-    print(processed_text)
+
+    # Determine the number of words per line for FastText
     words_per_line = 2
     if len(processed_text) % 2 != 0:
         words_per_line = 3
 
-    model = train_fasttext_model(log_data)
+    # Train FastText
+    model_fasttext = train_fasttext_model(data_category)
+
+    # Split input into chunks
     words = processed_text.split()
     chunks = [words[i:i + words_per_line] for i in range(0, len(words), words_per_line)]
 
+    # Find the most similar word for each chunk
     max_similarity = -1
     max_chunk = None
     max_word = None
 
     for chunk in chunks:
         chunk_sentence = ' '.join(chunk)
-        similar_words = model.get_nearest_neighbors(chunk_sentence, k=1)
+        similar_words = model_fasttext.get_nearest_neighbors(chunk_sentence, k=1)
 
         if similar_words:
             similarity, word = similar_words[0]  # Take the first (most similar) word
@@ -44,10 +55,13 @@ def similar_word(input_text, log_data):
                 max_chunk = chunk_sentence
                 max_word = word
 
+    # Print the result
     if max_chunk is not None:
         print(f"[ {max_chunk} ] \n########## {max_similarity} : {max_word} ##########")
+        # Predict sentiment using the input text and the most similar word
         predict_sentiment([input_text], [max_word])
 
+# Main section
 if __name__ == "__main__":
     model_settings = {
         'model': 'skipgram',
@@ -56,6 +70,8 @@ if __name__ == "__main__":
         'word_ngrams': 1,
         'dim': 300
     }
+
     print("Enter your sentence:")
     text_input = input()
-    similar_word(text_input, log_data)
+
+    similar_word(text_input, data_category)
