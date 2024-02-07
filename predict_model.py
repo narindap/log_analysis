@@ -11,7 +11,7 @@ def predict_sentiment(test_log_error_texts, test_log_names, model_filename='rand
 
     X_test_combined = pd.concat([pd.DataFrame(X_test_text.toarray()), pd.DataFrame(X_test_name.toarray())], axis=1)
 
-    # Make predictions
+    # Make prediction
     predictions_additional = loaded_model.predict(X_test_combined)
 
     # Display predicted sentiment for additional data
